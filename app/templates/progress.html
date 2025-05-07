@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.3.0/dist/chartjs-chart-matrix.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                        <span class="ml-2 font-bold text-xl">Muscle</span>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-6">
+                        <a href="/dashboard" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Dashboard</a>
+                        <a href="/exercises" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Exercises</a>
+                        <a href="/workouts" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Workouts</a>
+                        <a href="/logs" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Training Logs</a>
+                        <a href="/progress" class="px-3 py-2 text-white font-medium border-b-2 border-white">Progress</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
+                        <!-- Profile dropdown -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" class="bg-indigo-700 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                    <span class="sr-only">Open user menu</span>
+                                    <div class="h-8 w-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold" id="user-initial">
+                                        U
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" id="user-menu">
+                                <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">Your Profile</a>
+                                <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">Settings</a>
+                                <a href="#" id="sign-out-button" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mobile menu button -->
+                    <div class="flex items-center md:hidden">
+                        <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-indigo-200 hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" id="mobile-menu-button" aria-controls="mobile-menu" aria-expanded="false">
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="/dashboard" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="/exercises" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Exercises</a>
+                <a href="/workouts" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Workouts</a>
+                <a href="/logs" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Training Logs</a>
+                <a href="/progress" class="bg-indigo-700 text-white block px-3 py-2 rounded-md text-base font-medium">Progress</a>
+            </div>
+            <div class="pt-4 pb-3 border-t border-indigo-700">
+                <div class="flex items-center px-5">
+                    <div class="flex-shrink-0">
+                        <div class="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-lg" id="mobile-user-initial">
+                            U
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-base font-medium leading-none text-white" id="mobile-user-name">User Name</div>
+                        <div class="text-sm font-medium leading-none text-indigo-200" id="mobile-user-email">user@example.com</div>
+                    </div>
+                </div>
+                <div class="mt-3 px-2 space-y-1">
+                    <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:text-white hover:bg-indigo-700">Your Profile</a>
+                    <a href="/settings" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:text-white hover:bg-indigo-700">Settings</a>
+                    <a href="#" id="mobile-sign-out-button" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:text-white hover:bg-indigo-700">Sign out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <!-- Page Header with Time Range Filter -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Progress Tracking</h1>
+
+                <!-- Time Range Filters -->
+                <div class="mt-4 sm:mt-0">
+                    <div class="flex space-x-2">
+                        <button data-range="week" class="time-range-btn px-3 py-1 text-sm rounded-full border border-gray-300 dark:border-gray-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 focus:outline-none">
+                            Week
+                        </button>
+                        <button data-range="month" class="time-range-btn px-3 py-1 text-sm rounded-full border border-gray-300 dark:border-gray-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 focus:outline-none">
+                            Month
+                        </button>
+                        <button data-range="quarter" class="time-range-btn px-3 py-1 text-sm rounded-full border border-gray-300 dark:border-gray-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 focus:outline-none">
+                            3 Months
+                        </button>
+                        <button data-range="year" class="time-range-btn px-3 py-1 text-sm rounded-full border border-gray-300 dark:border-gray-600 bg-indigo-100 dark:bg-indigo-800 text-indigo-800 dark:text-indigo-200 focus:outline-none active">
+                            Year
+                        </button>
+                        <button data-range="all" class="time-range-btn px-3 py-1 text-sm rounded-full border border-gray-300 dark:border-gray-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 focus:outline-none">
+                            All Time
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <!-- Workouts Completed Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 rounded-md bg-green-100 dark:bg-green-900 p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 dark:text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                                        Workouts Completed
+                                    </dt>
+                                    <dd>
+                                        <div id="workout-count" class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            <div class="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded shimmer"></div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Volume Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 rounded-md bg-blue-100 dark:bg-blue-900 p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                                        Total Volume Lifted
+                                    </dt>
+                                    <dd>
+                                        <div id="total-volume" class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            <div class="h-6 w-24 bg-gray-200 dark:bg-gray-700 rounded shimmer"></div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Duration Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 rounded-md bg-purple-100 dark:bg-purple-900 p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600 dark:text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                                        Total Workout Time
+                                    </dt>
+                                    <dd>
+                                        <div id="total-duration" class="text-lg font-semibold text-gray-900 dark:text-white">
+                                            <div class="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded shimmer"></div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Workout Consistency Chart Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Workout Consistency</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="h-64">
+                            <canvas id="consistency-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Muscle Group Balance Chart Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Muscle Group Balance</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="h-64">
+                            <canvas id="muscle-balance-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercise Progress Section -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden mb-6">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Exercise Progress</h3>
+                        <div class="mt-3 sm:mt-0 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                            <select id="exercise-select" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
+                                <option value="">Select an exercise</option>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                            <select id="progress-metric" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
+                                <option value="weight">Max Weight</option>
+                                <option value="volume">Total Volume</option>
+                                <option value="reps">Max Reps</option>
+                                <option value="estimated-1rm">Estimated 1RM</option>
+                            </select>
+                            <select id="progress-aggregation" class="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-sm">
+                                <option value="session">By Session</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div id="no-exercise-selected" class="py-8 text-center text-gray-500 dark:text-gray-400">
+                        <p>Select an exercise to see your progress over time</p>
+                    </div>
+                    <div id="exercise-progress-container" class="hidden">
+                        <div class="h-64">
+                            <canvas id="exercise-progress-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Records Table -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden mb-6">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Personal Records</h3>
+                </div>
+                <div class="p-4">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-900">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Exercise</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Muscle Group</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Max Weight</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date Achieved</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pr-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Loading placeholder rows -->
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        Loading personal records...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Default user ID for development testing
+        const USER_ID = 1;
+        let currentTimeRange = 'year';
+        let exerciseProgressChart = null;
+        let consistencyChart = null;
+        let muscleBalanceChart = null;
+        let exercisesList = [];
+        let darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // Colors for charts
+        const chartColors = {
+            primary: darkMode ? 'rgba(129, 140, 248, 1)' : 'rgba(79, 70, 229, 1)',
+            primaryLight: darkMode ? 'rgba(129, 140, 248, 0.2)' : 'rgba(79, 70, 229, 0.2)',
+            secondary: darkMode ? 'rgba(249, 168, 212, 1)' : 'rgba(219, 39, 119, 1)',
+            secondaryLight: darkMode ? 'rgba(249, 168, 212, 0.2)' : 'rgba(219, 39, 119, 0.2)',
+            text: darkMode ? 'rgba(229, 231, 235, 1)' : 'rgba(31, 41, 55, 1)',
+            grid: darkMode ? 'rgba(75, 85, 99, 0.2)' : 'rgba(209, 213, 219, 0.2)'
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // For development, set a fake token if none exists
+            if (!localStorage.getItem('accessToken')) {
+                localStorage.setItem('accessToken', 'dev_testing_token');
+            }
+
+            // Set default user info for testing
+            document.getElementById('user-initial').textContent = 'T';
+            document.getElementById('mobile-user-initial').textContent = 'T';
+            document.getElementById('mobile-user-name').textContent = 'Test User';
+            document.getElementById('mobile-user-email').textContent = 'test@example.com';
+
+            // Toggle user menu
+            document.getElementById('user-menu-button').addEventListener('click', function() {
+                document.getElementById('user-menu').classList.toggle('hidden');
+            });
+
+            // Toggle mobile menu
+            document.getElementById('mobile-menu-button').addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+
+            // Sign out functionality
+            function signOut() {
+                localStorage.removeItem('accessToken');
+                window.location.href = '/login';
+            }
+
+            document.getElementById('sign-out-button').addEventListener('click', signOut);
+            document.getElementById('mobile-sign-out-button').addEventListener('click', signOut);
+
+            // Time range filter buttons
+            document.querySelectorAll('.time-range-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const range = this.getAttribute('data-range');
+                    if (range !== currentTimeRange) {
+                        // Update active button styling
+                        document.querySelectorAll('.time-range-btn').forEach(b => {
+                            b.classList.remove('bg-indigo-100', 'dark:bg-indigo-800', 'text-indigo-800', 'dark:text-indigo-200', 'active');
+                            b.classList.add('hover:bg-indigo-50', 'dark:hover:bg-indigo-900');
+                        });
+
+                        this.classList.add('bg-indigo-100', 'dark:bg-indigo-800', 'text-indigo-800', 'dark:text-indigo-200', 'active');
+                        this.classList.remove('hover:bg-indigo-50', 'dark:hover:bg-indigo-900');
+
+                        currentTimeRange = range;
+
+                        // Reload data with new time range
+                        loadProgressData();
+                    }
+                });
+            });
+
+            // Exercise select and metric changes
+            document.getElementById('exercise-select').addEventListener('change', updateExerciseProgress);
+            document.getElementById('progress-metric').addEventListener('change', updateExerciseProgress);
+            document.getElementById('progress-aggregation').addEventListener('change', updateExerciseProgress);
+
+            // Initial data load
+            loadProgressData();
+            loadExercisesList();
+            loadPersonalRecords();
+        });
+
+        function loadProgressData() {
+            // Load overview stats
+            loadProgressOverview();
+
+            // Load consistency data
+            loadConsistencyData();
+
+            // Load muscle group balance
+            loadMuscleGroupBalance();
+
+            // Update exercise progress if exercise is selected
+            const selectedExercise = document.getElementById('exercise-select').value;
+            if (selectedExercise) {
+                updateExerciseProgress();
+            }
+        }
+
+        function loadProgressOverview() {
+            fetch(`/api/progress/overview?user_id=${USER_ID}&time_range=${currentTimeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('workout-count').textContent = data.workout_count;
+                    document.getElementById('total-volume').textContent = formatNumber(data.total_volume) + ' kg';
+                    document.getElementById('total-duration').textContent = formatDuration(data.total_duration);
+                })
+                .catch(error => {
+                    console.error('Error loading progress overview:', error);
+                    document.getElementById('workout-count').textContent = 'Error';
+                    document.getElementById('total-volume').textContent = 'Error';
+                    document.getElementById('total-duration').textContent = 'Error';
+                });
+        }
+
+        function loadConsistencyData() {
+            fetch(`/api/progress/consistency?user_id=${USER_ID}&time_range=${currentTimeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderConsistencyChart(data);
+                })
+                .catch(error => {
+                    console.error('Error loading consistency data:', error);
+                });
+        }
+
+        function loadMuscleGroupBalance() {
+            fetch(`/api/progress/volume-by-muscle?user_id=${USER_ID}&time_range=${currentTimeRange}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderMuscleBalanceChart(data);
+                })
+                .catch(error => {
+                    console.error('Error loading muscle group balance:', error);
+                });
+        }
+
+        function loadExercisesList() {
+            fetch(`/api/exercises/?user_id=${USER_ID}`)
+                .then(response => response.json())
+                .then(data => {
+                    exercisesList = data;
+                    const selectElement = document.getElementById('exercise-select');
+
+                    // Sort exercises by name
+                    exercisesList.sort((a, b) => a.name.localeCompare(b.name));
+
+                    // Clear existing options (except the first default one)
+                    while (selectElement.options.length > 1) {
+                        selectElement.remove(1);
+                    }
+
+                    // Add options for each exercise
+                    exercisesList.forEach(exercise => {
+                        const option = document.createElement('option');
+                        option.value = exercise.exercise_id;
+                        option.textContent = exercise.name;
+                        selectElement.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading exercises list:', error);
+                });
+        }
+
+        function updateExerciseProgress() {
+            const exerciseId = document.getElementById('exercise-select').value;
+            const metric = document.getElementById('progress-metric').value;
+            const aggregation = document.getElementById('progress-aggregation').value;
+
+            if (!exerciseId) {
+                document.getElementById('no-exercise-selected').classList.remove('hidden');
+                document.getElementById('exercise-progress-container').classList.add('hidden');
+                return;
+            }
+
+            fetch(`/api/progress/exercise/${exerciseId}?user_id=${USER_ID}&metric=${metric}&time_range=${currentTimeRange}&aggregation=${aggregation}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('no-exercise-selected').classList.add('hidden');
+                    document.getElementById('exercise-progress-container').classList.remove('hidden');
+                    renderExerciseProgressChart(data);
+                })
+                .catch(error => {
+                    console.error('Error loading exercise progress:', error);
+                });
+        }
+
+        function loadPersonalRecords() {
+            fetch(`/api/progress/personal-records?user_id=${USER_ID}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderPersonalRecordsTable(data);
+                })
+                .catch(error => {
+                    console.error('Error loading personal records:', error);
+                });
+        }
+
+        function renderConsistencyChart(data) {
+            const ctx = document.getElementById('consistency-chart').getContext('2d');
+
+            // Extract data for chart
+            const dates = data.map(item => new Date(item.workout_date));
+            const counts = data.map(item => item.workout_count);
+
+            // Destroy existing chart if it exists
+            if (consistencyChart) {
+                consistencyChart.destroy();
+            }
+
+            // Create the new chart
+            consistencyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Workouts',
+                        data: counts,
+                        backgroundColor: chartColors.primaryLight,
+                        borderColor: chartColors.primary,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    const date = new Date(context[0].label);
+                                    return date.toLocaleDateString('en-US', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    });
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                tooltipFormat: 'PP'
+                            },
+                            ticks: {
+                                color: chartColors.text
+                            },
+                            grid: {
+                                color: chartColors.grid
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: chartColors.text
+                            },
+                            grid: {
+                                color: chartColors.grid
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderMuscleBalanceChart(data) {
+            const ctx = document.getElementById('muscle-balance-chart').getContext('2d');
+
+            // Extract data for chart
+            const labels = data.map(item => item.muscle_group);
+            const values = data.map(item => item.total_volume);
+
+            // Generate colors for each section
+            const backgroundColors = generateColorPalette(labels.length, 0.2);
+            const borderColors = generateColorPalette(labels.length, 1);
+
+            // Destroy existing chart if it exists
+            if (muscleBalanceChart) {
+                muscleBalanceChart.destroy();
+            }
+
+            // Create the new chart (polar area chart for muscle group balance)
+            muscleBalanceChart = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            ticks: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: chartColors.text,
+                                boxWidth: 12,
+                                padding: 10
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${formatNumber(value)} kg`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderExerciseProgressChart(data) {
+            const ctx = document.getElementById('exercise-progress-chart').getContext('2d');
+            const metric = document.getElementById('progress-metric').value;
+
+            // Extract data for chart
+            const labels = data.progress.map(item => new Date(item.date));
+            const values = data.progress.map(item => item.value);
+
+            // Determine y-axis label based on the selected metric
+            let yAxisLabel = 'Weight (kg)';
+            let tooltipSuffix = ' kg';
+            if (metric === 'reps') {
+                yAxisLabel = 'Repetitions';
+                tooltipSuffix = ' reps';
+            } else if (metric === 'volume') {
+                yAxisLabel = 'Volume (kg)';
+                tooltipSuffix = ' kg';
+            } else if (metric === 'estimated-1rm') {
+                yAxisLabel = 'Estimated 1RM (kg)';
+                tooltipSuffix = ' kg';
+            }
+
+            // Destroy existing chart if it exists
+            if (exerciseProgressChart) {
+                exerciseProgressChart.destroy();
+            }
+
+            // Create the new chart
+            exerciseProgressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: data.exercise.name,
+                        data: values,
+                        borderColor: chartColors.primary,
+                        backgroundColor: chartColors.primaryLight,
+                        fill: true,
+                        tension: 0.1,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: chartColors.text
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw || 0;
+                                    return `${context.dataset.label}: ${formatNumber(value)}${tooltipSuffix}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                tooltipFormat: 'PP'
+                            },
+                            ticks: {
+                                color: chartColors.text
+                            },
+                            grid: {
+                                color: chartColors.grid
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: yAxisLabel,
+                                color: chartColors.text
+                            },
+                            ticks: {
+                                color: chartColors.text
+                            },
+                            grid: {
+                                color: chartColors.grid
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPersonalRecordsTable(data) {
+            const tableBody = document.getElementById('pr-table-body');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                        No personal records found. Complete some workouts to see your records!
+                    </td>
+                `;
+                tableBody.appendChild(emptyRow);
+                return;
+            }
+
+            data.forEach(record => {
+                const row = document.createElement('tr');
+                row.classList.add('hover:bg-gray-50', 'dark:hover:bg-gray-700');
+
+                // Format date
+                const achievedDate = new Date(record.date_achieved);
+                const formattedDate = achievedDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${record.exercise_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${record.muscle_group}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 font-semibold">${record.max_weight} kg</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${formattedDate}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Utility Functions
+        function formatNumber(num) {
+            if (num === null || num === undefined) return '0';
+            return parseFloat(num).toLocaleString('en-US', {
+                maximumFractionDigits: 1,
+                minimumFractionDigits: 0
+            });
+        }
+
+        function formatDuration(minutes) {
+            if (!minutes) return '0 min';
+
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+
+            if (hours === 0) {
+                return `${remainingMinutes} min`;
+            } else if (remainingMinutes === 0) {
+                return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+            } else {
+                return `${hours} ${hours === 1 ? 'hour' : 'hours'} ${remainingMinutes} min`;
+            }
+        }
+
+        function generateColorPalette(count, alpha) {
+            const colors = [];
+            const hueStep = 360 / count;
+
+            for (let i = 0; i < count; i++) {
+                const hue = (i * hueStep) % 360;
+                colors.push(`hsla(${hue}, 70%, 60%, ${alpha})`);
+            }
+
+            return colors;
+        }
+    </script>
+</body>
+</html>

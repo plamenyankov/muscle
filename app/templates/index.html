@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-indigo-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <span class="font-bold text-xl">Muscle</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="hover:text-indigo-200">Home</a>
+                <a href="#" class="hover:text-indigo-200">Exercises</a>
+                <a href="#" class="hover:text-indigo-200">Workouts</a>
+                <a href="#" class="hover:text-indigo-200">Progress</a>
+            </div>
+            <div>
+                <button class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium hover:bg-indigo-100 transition">
+                    Sign In
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-indigo-700 text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Track Your Fitness Journey</h1>
+            <p class="text-xl mb-8">Plan workouts, log your training, and monitor your progress over time.</p>
+            <button class="bg-white text-indigo-700 px-6 py-3 rounded-lg font-medium text-lg hover:bg-indigo-100 transition">
+                Start Tracking Now
+            </button>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Powerful Features for Your Training</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Plan Workouts</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Create custom workout plans tailored to your goals and schedule.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Log Training</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Record your sets, reps, and weights with an easy-to-use mobile interface.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Track Progress</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Monitor your performance and track improvements over time with detailed analytics.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-indigo-100 dark:bg-indigo-900 py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Start Your Fitness Journey?</h2>
+            <button class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium text-lg hover:bg-indigo-700 transition">
+                Create Free Account
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                        Muscle
+                    </h3>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:text-indigo-300">About</a>
+                    <a href="#" class="hover:text-indigo-300">Privacy</a>
+                    <a href="#" class="hover:text-indigo-300">Terms</a>
+                    <a href="#" class="hover:text-indigo-300">Contact</a>
+                </div>
+            </div>
+            <div class="mt-6 text-center text-gray-400 text-sm">
+                &copy; 2023 Muscle Fitness Tracker. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Check for dark mode preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</body>
+</html>

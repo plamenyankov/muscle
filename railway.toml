@@ -1,0 +1,21 @@
+[build]
+builder = "NIXPACKS" # Uses Nixpacks to build your app
+
+[deploy]
+numReplicas = 1
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[deploy.healthcheck]
+path = "/"
+interval = 15
+timeout = 5
+retries = 3
+
+[env]
+PORT = "8000"
+
+# The Railway web UI will be used to set other environment variables
+# like database credentials securely

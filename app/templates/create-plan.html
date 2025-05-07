@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Training Plan - Muscle Fitness Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                        <span class="ml-2 font-bold text-xl">Muscle</span>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-6">
+                        <a href="/dashboard" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Dashboard</a>
+                        <a href="/exercises" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Exercises</a>
+                        <a href="/workouts" class="px-3 py-2 text-white font-medium border-b-2 border-white">Workouts</a> <!-- Assuming this page will list plans -->
+                        <a href="/logs" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Training Logs</a>
+                        <a href="/progress" class="px-3 py-2 text-indigo-200 hover:text-white font-medium hover:border-b-2 hover:border-white">Progress</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden md:ml-4 md:flex-shrink-0 md:flex md:items-center">
+                        <!-- Profile dropdown -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" class="bg-indigo-700 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                    <span class="sr-only">Open user menu</span>
+                                    <div class="h-8 w-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold" id="user-initial">
+                                        U
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" id="user-menu">
+                                <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">Your Profile</a>
+                                <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">Settings</a>
+                                <a href="#" id="sign-out-button" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem">Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mobile menu button -->
+                    <div class="flex items-center md:hidden">
+                        <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-indigo-200 hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" id="mobile-menu-button" aria-controls="mobile-menu" aria-expanded="false">
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="/dashboard" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="/exercises" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Exercises</a>
+                <a href="/workouts" class="bg-indigo-700 text-white block px-3 py-2 rounded-md text-base font-medium">Workouts</a>
+                <a href="/logs" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Training Logs</a>
+                <a href="/progress" class="text-indigo-200 hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Progress</a>
+            </div>
+            <div class="pt-4 pb-3 border-t border-indigo-700">
+                <div class="flex items-center px-5">
+                    <div class="flex-shrink-0">
+                        <div class="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold text-lg" id="mobile-user-initial-display">
+                            U
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-base font-medium leading-none text-white" id="mobile-user-name">User Name</div>
+                        <div class="text-sm font-medium leading-none text-indigo-200" id="mobile-user-email">user@example.com</div>
+                    </div>
+                </div>
+                <div class="mt-3 px-2 space-y-1">
+                    <a href="/profile" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:text-white hover:bg-indigo-700">Your Profile</a>
+                    <a href="/settings" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:text-white hover:bg-indigo-700">Settings</a>
+                    <a href="#" id="mobile-sign-out-button" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-200 hover:text-white hover:bg-indigo-700">Sign out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Create New Training Plan</h1>
+
+        <!-- Plan Name and Description -->
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+            <form id="create-plan-form">
+                <div class="mb-4">
+                    <label for="plan-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Plan Name</label>
+                    <input type="text" name="plan-name" id="plan-name" required class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-700 dark:text-white p-2" placeholder="e.g., Full Body Strength - Phase 1">
+                </div>
+                <div>
+                    <label for="plan-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description (Optional)</label>
+                    <textarea id="plan-description" name="plan-description" rows="3" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-700 dark:text-white p-2" placeholder="A brief description of this training plan..."></textarea>
+                </div>
+            </form>
+        </div>
+
+        <!-- Exercise Selection & Plan Builder -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Available Exercises -->
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Available Exercises</h2>
+                <!-- Search/Filter for exercises will go here -->
+                <div class="mb-4">
+                    <input type="text" id="exercise-search" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-700 dark:text-white p-2" placeholder="Search exercises...">
+                </div>
+                <div class="mb-4">
+                    <select id="muscle-group-filter" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-700 dark:text-white p-2">
+                        <option value="">All Muscle Groups</option>
+                        <!-- Will be populated dynamically -->
+                    </select>
+                </div>
+                <div id="available-exercises-list" class="max-h-96 overflow-y-auto space-y-3">
+                    <!-- Loading indicator -->
+                    <div id="loading-exercises" class="text-center py-4">
+                        <div class="inline-block animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-indigo-600"></div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Loading exercises...</p>
+                    </div>
+                    <!-- Exercises will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Current Plan -->
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Your New Plan</h2>
+                <div id="current-plan-exercises" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400" id="empty-plan-message">Add exercises from the list to build your plan.</p>
+                    <!-- Added exercises will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-8 flex justify-end space-x-3">
+            <button type="button" id="cancel-plan-btn" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Cancel
+            </button>
+            <button type="button" id="save-plan-btn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Save Plan
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Basic Nav and Auth script (similar to other pages)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+
+        document.getElementById('user-menu-button').addEventListener('click', function() {
+            document.getElementById('user-menu').classList.toggle('hidden');
+        });
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        function signOut() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user_name');
+            window.location.href = '/login';
+        }
+        document.getElementById('sign-out-button').addEventListener('click', signOut);
+        document.getElementById('mobile-sign-out-button').addEventListener('click', signOut);
+
+        // Default user ID for development testing
+        const USER_ID = 1;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('accessToken')) {
+                // For development, allow access but ideally redirect or disable functionality
+                console.warn("No access token found. Setting development token.");
+                localStorage.setItem('accessToken', 'dev_testing_token');
+            }
+            const userName = localStorage.getItem('user_name') || 'User';
+            const initial = (userName.charAt(0) || 'U').toUpperCase();
+            document.getElementById('user-initial').textContent = initial;
+            document.getElementById('mobile-user-initial-display').textContent = initial;
+            document.getElementById('mobile-user-name').textContent = userName;
+            // For mobile email, you might want to fetch this or use a placeholder
+            document.getElementById('mobile-user-email').textContent = localStorage.getItem('user_email') || (userName !== 'User' ? userName.toLowerCase().replace(' ', '.') + '@example.com' : 'user@example.com');
+
+            // Load muscle groups for the filter
+            loadMuscleGroups();
+
+            // Load all exercises initially
+            loadExercises();
+
+            // Set up search functionality
+            document.getElementById('exercise-search').addEventListener('input', debounce(function() {
+                loadExercises({
+                    search: this.value.trim(),
+                    muscleGroup: document.getElementById('muscle-group-filter').value
+                });
+            }, 300));
+
+            document.getElementById('muscle-group-filter').addEventListener('change', function() {
+                loadExercises({
+                    search: document.getElementById('exercise-search').value.trim(),
+                    muscleGroup: this.value
+                });
+            });
+
+            // Plan creation specific JS
+            const currentPlanExercisesContainer = document.getElementById('current-plan-exercises');
+            const emptyPlanMessage = document.getElementById('empty-plan-message');
+            let planExercises = []; // Array to hold exercise objects for the plan
+
+            // Function to handle adding exercise to plan
+            window.addExerciseToPlan = function(exerciseId, exerciseName) {
+                // Prevent adding the same exercise multiple times
+                if (planExercises.find(ex => ex.id === exerciseId)) {
+                    alert(exerciseName + " is already in the plan.");
+                    return;
+                }
+
+                if (emptyPlanMessage) {
+                    emptyPlanMessage.style.display = 'none';
+                }
+
+                const exerciseData = {
+                    id: exerciseId,
+                    name: exerciseName,
+                    sets: 3,
+                    repsMin: 8,
+                    repsMax: 12,
+                    rest: 60,
+                    weight: null
+                };
+                planExercises.push(exerciseData);
+
+                const exerciseElement = document.createElement('div');
+                exerciseElement.classList.add('p-4', 'border', 'dark:border-gray-700', 'rounded-md', 'bg-gray-50', 'dark:bg-gray-700');
+                exerciseElement.setAttribute('data-exercise-id', exerciseId);
+                exerciseElement.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-medium text-gray-900 dark:text-white">${exerciseName}</h4>
+                        <button class="remove-exercise-btn text-sm text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" data-exercise-id="${exerciseId}">Remove</button>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+                        <div>
+                            <label for="sets-${exerciseId}" class="block text-xs font-medium text-gray-600 dark:text-gray-400">Sets</label>
+                            <input type="number" id="sets-${exerciseId}" value="${exerciseData.sets}" class="mt-1 block w-full p-1 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label for="reps-min-${exerciseId}" class="block text-xs font-medium text-gray-600 dark:text-gray-400">Reps Min</label>
+                            <input type="number" id="reps-min-${exerciseId}" value="${exerciseData.repsMin}" class="mt-1 block w-full p-1 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label for="reps-max-${exerciseId}" class="block text-xs font-medium text-gray-600 dark:text-gray-400">Reps Max</label>
+                            <input type="number" id="reps-max-${exerciseId}" value="${exerciseData.repsMax}" class="mt-1 block w-full p-1 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-600 dark:text-white">
+                        </div>
+                        <div>
+                            <label for="rest-${exerciseId}" class="block text-xs font-medium text-gray-600 dark:text-gray-400">Rest (s)</label>
+                            <input type="number" id="rest-${exerciseId}" value="${exerciseData.rest}" step="15" class="mt-1 block w-full p-1 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-600 dark:text-white">
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label for="weight-${exerciseId}" class="block text-xs font-medium text-gray-600 dark:text-gray-400">Target Weight (kg, optional)</label>
+                        <input type="number" id="weight-${exerciseId}" step="0.5" class="mt-1 block w-full p-1 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-600 dark:text-white">
+                    </div>
+                `;
+                currentPlanExercisesContainer.appendChild(exerciseElement);
+
+                // Add event listener for the new remove button
+                exerciseElement.querySelector('.remove-exercise-btn').addEventListener('click', function() {
+                    removeExerciseFromPlan(exerciseId);
+                });
+            }
+
+            function removeExerciseFromPlan(idToRemove) {
+                planExercises = planExercises.filter(ex => ex.id !== idToRemove);
+                const exerciseElementToRemove = currentPlanExercisesContainer.querySelector(`div[data-exercise-id="${idToRemove}"]`);
+                if (exerciseElementToRemove) {
+                    currentPlanExercisesContainer.removeChild(exerciseElementToRemove);
+                }
+                if (planExercises.length === 0 && emptyPlanMessage) {
+                    emptyPlanMessage.style.display = 'block';
+                }
+            }
+
+            document.getElementById('save-plan-btn').addEventListener('click', function() {
+                const planName = document.getElementById('plan-name').value;
+                const planDescription = document.getElementById('plan-description').value;
+
+                if (!planName.trim()) {
+                    alert('Please enter a name for your plan.');
+                    return;
+                }
+                if (planExercises.length === 0) {
+                    alert('Please add at least one exercise to your plan.');
+                    return;
+                }
+
+                // Update exercise details from inputs before saving
+                const finalPlanExercises = planExercises.map(ex => {
+                    return {
+                        exercise_id: parseInt(ex.id), // Ensure exercise_id is an integer
+                        target_sets: parseInt(document.getElementById(`sets-${ex.id}`).value) || 0,
+                        reps_min: parseInt(document.getElementById(`reps-min-${ex.id}`).value) || 0,
+                        reps_max: parseInt(document.getElementById(`reps-max-${ex.id}`).value) || 0,
+                        rest_period_seconds: parseInt(document.getElementById(`rest-${ex.id}`).value) || 0,
+                        target_weight: document.getElementById(`weight-${ex.id}`).value ? parseFloat(document.getElementById(`weight-${ex.id}`).value) : null
+                        // exercise_order will be set by backend
+                    };
+                });
+
+                const planData = {
+                    name: planName,
+                    description: planDescription || '',
+                    exercises: finalPlanExercises
+                };
+
+                console.log("Saving plan:", planData);
+                console.log("JSON to send:", JSON.stringify(planData, null, 2));
+
+                fetch('/api/workouts/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(planData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            try {
+                                const errData = JSON.parse(text);
+                                console.error("Error response (parsed):", errData);
+                                throw new Error(errData.detail || 'Failed to save plan. Status: ' + response.status);
+                            } catch (e) {
+                                console.error("Error response (raw):", text);
+                                throw new Error('Failed to save plan. Status: ' + response.status);
+                            }
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Plan saved successfully!');
+                    window.location.href = '/workouts';
+                })
+                .catch((error) => {
+                    console.error('Error saving plan:', error);
+                    alert('Error saving plan: ' + error.message);
+                });
+            });
+
+            document.getElementById('cancel-plan-btn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+                    window.location.href = '/workouts';
+                }
+            });
+        });
+
+        // Load muscle groups from API
+        function loadMuscleGroups() {
+            fetch('/api/exercises/muscle-groups/')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('muscle-group-filter');
+
+                    data.forEach(group => {
+                        const option = document.createElement('option');
+                        option.value = group.muscle_group_id;
+                        option.textContent = group.name;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading muscle groups:', error);
+                });
+        }
+
+        // Load exercises from API with optional filters
+        function loadExercises(filters = {}) {
+            // Show loading indicator
+            const exercisesList = document.getElementById('available-exercises-list');
+            const loadingIndicator = document.getElementById('loading-exercises');
+
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'block';
+            }
+
+            // Clear existing exercises except loading indicator
+            exercisesList.innerHTML = '';
+            if (loadingIndicator) {
+                exercisesList.appendChild(loadingIndicator);
+            }
+
+            // Build query parameters
+            let queryParams = new URLSearchParams();
+
+            // Add filters if provided
+            if (filters.muscleGroup) queryParams.append('muscle_group', filters.muscleGroup);
+            if (filters.search) queryParams.append('search', filters.search);
+
+            // Add user_id parameter
+            queryParams.append('user_id', USER_ID);
+
+            // Set a reasonable limit
+            queryParams.append('limit', 100);
+
+            // Fetch exercises
+            fetch(`/api/exercises/?${queryParams.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (loadingIndicator) {
+                        loadingIndicator.style.display = 'none';
+                    }
+
+                    if (data.length === 0) {
+                        const noResults = document.createElement('div');
+                        noResults.className = 'text-center py-4 text-gray-500';
+                        noResults.textContent = 'No exercises found matching your criteria.';
+                        exercisesList.appendChild(noResults);
+                        return;
+                    }
+
+                    // Sort exercises by name
+                    data.sort((a, b) => a.name.localeCompare(b.name));
+
+                    // Add each exercise to the list
+                    data.forEach(exercise => {
+                        const exerciseItem = document.createElement('div');
+                        exerciseItem.className = 'p-3 border dark:border-gray-700 rounded-md flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700';
+
+                        // Get muscle group name from backend
+                        const muscleGroup = exercise.muscle_group_name || 'Unknown';
+
+                        exerciseItem.innerHTML = `
+                            <div>
+                                <h4 class="font-medium text-gray-900 dark:text-white">${exercise.name}</h4>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">${muscleGroup}</p>
+                            </div>
+                            <button class="add-exercise-btn text-sm bg-indigo-500 hover:bg-indigo-600 text-white py-1 px-3 rounded-md" data-exercise-id="${exercise.exercise_id}" data-exercise-name="${exercise.name}">Add</button>
+                        `;
+
+                        exercisesList.appendChild(exerciseItem);
+
+                        // Add event listener for the Add button
+                        const addButton = exerciseItem.querySelector('.add-exercise-btn');
+                        addButton.addEventListener('click', function() {
+                            const exerciseId = this.dataset.exerciseId;
+                            const exerciseName = this.dataset.exerciseName;
+                            window.addExerciseToPlan(exerciseId, exerciseName);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading exercises:', error);
+                    if (loadingIndicator) {
+                        loadingIndicator.style.display = 'none';
+                    }
+
+                    const errorEl = document.createElement('div');
+                    errorEl.className = 'text-center py-4 text-red-500';
+                    errorEl.textContent = 'Error loading exercises. Please try again.';
+                    exercisesList.appendChild(errorEl);
+                });
+        }
+
+        // Utility function for debouncing
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+    </script>
+</body>
+</html>
