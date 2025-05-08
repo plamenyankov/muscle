@@ -45,11 +45,18 @@ A FastAPI-based application for tracking your fitness training sessions. Plan wo
    pip install -r requirements.txt
    ```
 
-4. Create `.env` file from example
+4. Create `.env` file manually
    ```
-   cp env.example .env
+   # Add these lines to your .env file
+   MYSQL_HOST=db
+   MYSQL_USER=root
+   MYSQL_PASSWORD=password
+   MYSQL_DATABASE=muscle_fitness
+   MYSQL_PORT=3306
+   SECRET_KEY=your_secret_key_here
+   DEBUG=True
    ```
-   Edit the `.env` file with your database credentials and other configuration.
+   Make sure to replace the placeholder values with your actual database credentials.
 
 ### Database Setup
 
